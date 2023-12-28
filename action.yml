@@ -1,23 +1,23 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Setup NetCode Weaver'
+description: 'Sets up NetCode Weaver (https://github.com/EvaisaDev/UnityNetcodeWeaver) for patching Unity mods that depend on NetCode for GameObjects.'
+author: 'Lordfirespeed'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'heart'
-  color: 'red'
+  icon: 'hard-drive'
+  color: 'purple'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  netcode-weaver-version:
+    description: 'NetCode weaver version to setup'
     required: true
-    default: '1000'
-
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+  deps-packages:
+    description: 'JSON array of NuGet package IDs and versions to copy reference assemblies from.'
+    default: "[]"
+  target-framework:
+    description: 'Target framework moniker used to resolve dependency assemblies.'
+    required: true
 
 runs:
   using: node20
