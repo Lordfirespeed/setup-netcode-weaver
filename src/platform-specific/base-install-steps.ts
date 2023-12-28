@@ -248,7 +248,10 @@ export default abstract class InstallSteps {
 
     await fs.cp(
       path.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw),
-      toDir
+      toDir,
+      {
+        recursive: true
+      }
     )
   }
 

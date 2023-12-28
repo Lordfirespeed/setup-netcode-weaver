@@ -14549,7 +14549,9 @@ class InstallSteps {
         const chosenTfm = targetFramework.MostPreferableForConsumption(tfms);
         if (!chosenTfm)
             throw new Error(`No consumable sources were found in ${fromPackageDir}`);
-        await promises_1.default.cp(path_1.default.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw), toDir);
+        await promises_1.default.cp(path_1.default.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw), toDir, {
+            recursive: true
+        });
     }
     async CopyReferenceAssemblies(targetFramework, netcodeWeaverDirectory, packages) {
         const netcodeWeaverDepsDir = path_1.default.join(netcodeWeaverDirectory, 'deps');
