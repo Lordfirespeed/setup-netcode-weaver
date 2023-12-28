@@ -11,6 +11,7 @@ import {
 } from '../lib/target-framework-moniker'
 import semver, { SemVer } from 'semver'
 import * as process from 'process'
+import typeSafeError from '../lib/type-safe-error'
 
 const nuGetPackageSpecifierSchema = z.object({
   id: z.string(),
@@ -82,6 +83,7 @@ export default abstract class InstallSteps {
           })
         )
     } catch (error) {
+      typeSafeError(error, core.error)
       throw new Error('"netcode-weaver-version" input value is invalid!', {
         cause: error
       })
@@ -93,6 +95,7 @@ export default abstract class InstallSteps {
         .array(nuGetPackageSpecifierSchema)
         .parse(JSON.parse(core.getInput('deps-packages')))
     } catch (error) {
+      typeSafeError(error, core.error)
       throw new Error('"deps-packages" input value is invalid!', {
         cause: error
       })
@@ -106,6 +109,7 @@ export default abstract class InstallSteps {
         })
       )
     } catch (error) {
+      typeSafeError(error, core.error)
       throw new Error('"target-framework" input value is invalid!', {
         cause: error
       })

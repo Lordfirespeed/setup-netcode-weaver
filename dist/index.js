@@ -14395,6 +14395,7 @@ __nccwpck_require__(386);
 const target_framework_moniker_1 = __nccwpck_require__(5932);
 const semver_1 = __importDefault(__nccwpck_require__(1383));
 const process = __importStar(__nccwpck_require__(7282));
+const type_safe_error_1 = __importDefault(__nccwpck_require__(7403));
 const nuGetPackageSpecifierSchema = zod_1.z.object({
     id: zod_1.z.string(),
     version: zod_1.z.string().semVer({ allowBuild: false })
@@ -14440,6 +14441,7 @@ class InstallSteps {
             }));
         }
         catch (error) {
+            (0, type_safe_error_1.default)(error, core.error);
             throw new Error('"netcode-weaver-version" input value is invalid!', {
                 cause: error
             });
@@ -14451,6 +14453,7 @@ class InstallSteps {
                 .parse(JSON.parse(core.getInput('deps-packages')));
         }
         catch (error) {
+            (0, type_safe_error_1.default)(error, core.error);
             throw new Error('"deps-packages" input value is invalid!', {
                 cause: error
             });
@@ -14462,6 +14465,7 @@ class InstallSteps {
             }));
         }
         catch (error) {
+            (0, type_safe_error_1.default)(error, core.error);
             throw new Error('"target-framework" input value is invalid!', {
                 cause: error
             });
