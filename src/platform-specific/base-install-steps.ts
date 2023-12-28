@@ -150,7 +150,7 @@ export default abstract class InstallSteps {
   }
 
   async ExtractArchive(archivePath: string): Promise<string> {
-    return await toolCache.extractZip(archivePath, 'NetcodeWeaver')
+    return await toolCache.extractZip(archivePath)
   }
 
   async PostInstall(_: string): Promise<void> {}
