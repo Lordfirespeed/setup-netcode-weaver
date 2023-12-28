@@ -1,9 +1,9 @@
 # Create a GitHub Action Using TypeScript
 
-[![GitHub Super-Linter](https://github.com/actions/typescript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/actions/typescript-action/actions/workflows/ci.yml/badge.svg)
-[![Check dist/](https://github.com/actions/typescript-action/actions/workflows/check-dist.yml/badge.svg)](https://github.com/actions/typescript-action/actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/actions/typescript-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/actions/typescript-action/actions/workflows/codeql-analysis.yml)
+[![GitHub Super-Linter](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
+![CI](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/ci.yml/badge.svg)
+[![Check dist/](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml/badge.svg)](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml)
+[![CodeQL](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.comLordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml)
 [![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
 Use this template to bootstrap the creation of a TypeScript action. :rocket:
