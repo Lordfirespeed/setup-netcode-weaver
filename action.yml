@@ -19,6 +19,10 @@ inputs:
     description: 'Target framework moniker used to resolve dependency assemblies.'
     required: true
 
+outputs:
+  netcode-weaver-directory:
+    description: 'Netcode Weaver installation directory'
+
 runs:
   using: node20
   main: dist/index.js
