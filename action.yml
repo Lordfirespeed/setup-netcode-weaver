@@ -1,5 +1,5 @@
 name: 'Setup NetCode Weaver'
-description: 'Sets up NetCode Weaver (https://github.com/EvaisaDev/UnityNetcodeWeaver) for patching Unity mods that depend on NetCode for GameObjects.'
+description: 'Sets up NetCode Weaver for patching Unity mods that depend on NetCode for GameObjects.'
 author: 'Lordfirespeed'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
