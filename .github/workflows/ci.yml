@@ -61,7 +61,6 @@ jobs:
           dotnet new console -o Console
           dotnet nuget add source "https://nuget.bepinex.dev/v3/index.json"
           dotnet add Console package LethalCompany.GameLibs.Steam --version 45.0.2-alpha.1
-          dotnet restore
 
       - name: Test Local Action
         id: test-action
