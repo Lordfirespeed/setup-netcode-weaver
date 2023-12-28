@@ -1,7 +1,17 @@
 /**
  * The entrypoint for the action.
  */
-import { run } from './main'
+import * as core from '@actions/core'
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-run()
+import attemptInstall from './main'
+import typeSafeError from './lib/type-safe-error'
+
+async function wrap_install(): Promise<void> {
+  try {
+    await attemptInstall()
+  } catch (error) {
+    typeSafeError(error, core.setFailed)
+  }
+}
+
+void wrap_install()
