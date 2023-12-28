@@ -56,12 +56,19 @@ jobs:
         with:
           dotnet-version: "8.0.100"
 
+      - name: Setup .NET project
+        run: |
+          dotnet new console -o Console
+          dotnet add Console package LethalCompany.GameLibs.Steam -Version 45.0.2-alpha.1
+          dotnet restore
+
       - name: Test Local Action
         id: test-action
         uses: ./
         with:
           netcode-weaver-version: 2.4.0
           target-framework: "netstandard2.1"
+          deps-packages: '[{"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}, {"id": "UnityEngine.Modules", "version": "2022.3.9"}]'
 
       - name: Print Output
         id: output
