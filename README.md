@@ -10,7 +10,8 @@ This action sets up **Netcode Weaver** for use in actions.
 
 ## Usage
 
-The following example will setup Netcode Weaver `v2.4.0` and copy the appropriate assemblies from provided packages into the `NetcodeWeaver/deps/` folder.
+The following example will setup Netcode Weaver `v2.4.0` and copy the appropriate assemblies
+from provided packages into the `NetcodeWeaver/deps/` folder.
 
 ```yaml
 steps:
