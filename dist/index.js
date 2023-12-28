@@ -14427,7 +14427,7 @@ class InstallSteps {
         await this.PostInstall(unpackedDir);
         await this.CopyReferenceAssemblies(inputs.targetFrameworkMoniker, unpackedDir, inputs.depsPackages);
         core.info(`Installed NetWeaver to ${unpackedDir}`);
-        const children = await promises_1.default.readdir(unpackedDir);
+        const children = await promises_1.default.readdir(path_1.default.join(unpackedDir, 'deps'));
         core.info(children.join(', '));
         return {
             installDirectory: unpackedDir
@@ -14494,8 +14494,14 @@ class InstallSteps {
     async DownloadArchive(netcodeWeaverVersion) {
         return await toolCache.downloadTool(this.GetDownloadUrl(netcodeWeaverVersion), path_1.default.join(this.GetTempDirectory(), this.GetArchiveName(netcodeWeaverVersion)));
     }
+    ExtractToPath() {
+        const homeDir = process.env['HOME'];
+        if (!homeDir)
+            throw new Error("$HOME environment variable not set - can't resolve destination directory.");
+        return path_1.default.join(homeDir, 'NetcodeWeaver');
+    }
     async ExtractArchive(archivePath) {
-        return await toolCache.extractZip(archivePath, 'NetcodeWeaver');
+        return await toolCache.extractZip(archivePath, this.ExtractToPath());
     }
     async PostInstall(_) { }
     GetNuGetPackageCacheDirectory() {

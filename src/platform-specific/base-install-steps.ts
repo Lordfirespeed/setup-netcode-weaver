@@ -68,7 +68,7 @@ export default abstract class InstallSteps {
 
     core.info(`Installed NetWeaver to ${unpackedDir}`)
 
-    const children = await fs.readdir(unpackedDir)
+    const children = await fs.readdir(path.join(unpackedDir, 'deps'))
     core.info(children.join(', '))
 
     return {
@@ -154,8 +154,18 @@ export default abstract class InstallSteps {
     )
   }
 
+  ExtractToPath(): string {
+    const homeDir = process.env['HOME']
+    if (!homeDir)
+      throw new Error(
+        "$HOME environment variable not set - can't resolve destination directory."
+      )
+
+    return path.join(homeDir, 'NetcodeWeaver')
+  }
+
   async ExtractArchive(archivePath: string): Promise<string> {
-    return await toolCache.extractZip(archivePath, 'NetcodeWeaver')
+    return await toolCache.extractZip(archivePath, this.ExtractToPath())
   }
 
   async PostInstall(_: string): Promise<void> {}
