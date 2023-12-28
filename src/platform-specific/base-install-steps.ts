@@ -3,14 +3,14 @@ import fs from 'fs/promises'
 import * as core from '@actions/core'
 import * as toolCache from '@actions/tool-cache'
 import { SafeParseSuccess, z } from 'zod'
+import { SemVer } from 'semver'
+import * as process from 'process'
 
 import '../lib/validation/semver-string-transformer'
 import {
   TargetFrameworkMoniker,
   targetFrameworkMonikerSchema
 } from '../lib/target-framework-moniker'
-import semver, { SemVer } from 'semver'
-import * as process from 'process'
 import typeSafeError from '../lib/type-safe-error'
 
 const nuGetPackageSpecifierSchema = z.object({
