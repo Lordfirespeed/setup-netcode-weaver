@@ -37,6 +37,7 @@ let _extractZipMock: jest.SpyInstance<
 let _readdirMock: jest.SpyInstance
 let _cpMock: jest.SpyInstance
 let _copyFileMock: jest.SpyInstance
+let _writeFileMock: jest.SpyInstance
 
 describe('action', () => {
   const originalProcessEnv = process.env
@@ -91,6 +92,7 @@ describe('action', () => {
     _readdirMock = jest.spyOn(fs, 'readdir').mockResolvedValue([])
     _cpMock = jest.spyOn(fs, 'cp').mockImplementation()
     _copyFileMock = jest.spyOn(fs, 'copyFile').mockImplementation()
+    _writeFileMock = jest.spyOn(fs, 'writeFile').mockImplementation()
 
     mockPosixImplementations()
   })
