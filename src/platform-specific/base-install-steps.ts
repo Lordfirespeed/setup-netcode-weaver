@@ -229,6 +229,10 @@ export default abstract class InstallSteps {
     const tfmDirs = await fs.readdir(libOrRefDir.path, { withFileTypes: true })
     const tfms = tfmDirs
       .filter(subItem => subItem.isDirectory())
+      .filter(subItem => {
+        core.info(subItem.name)
+        return true
+      })
       .map(subItem => targetFrameworkMonikerSchema.safeParse(subItem.name))
       .filter(
         (

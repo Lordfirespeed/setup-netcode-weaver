@@ -14543,6 +14543,10 @@ class InstallSteps {
         const tfmDirs = await promises_1.default.readdir(libOrRefDir.path, { withFileTypes: true });
         const tfms = tfmDirs
             .filter(subItem => subItem.isDirectory())
+            .filter(subItem => {
+            core.info(subItem.name);
+            return true;
+        })
             .map(subItem => target_framework_moniker_1.targetFrameworkMonikerSchema.safeParse(subItem.name))
             .filter((parseResult) => parseResult.success)
             .map(parseResult => parseResult.data);
