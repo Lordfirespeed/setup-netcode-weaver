@@ -183,24 +183,14 @@ export default abstract class InstallSteps {
   abstract GetDotnetHome(): string
 
   async GetRuntimeAssembliesDirectory(): Promise<string> {
-    const netCoreRuntime = path.join(
+    return path.join(
       this.GetDotnetHome(),
-      'shared',
-      'Microsoft.NETCore.App'
+      'packs',
+      'NETStandard.Library.Ref',
+      '2.1.0',
+      'ref',
+      'netstandard2.1'
     )
-
-    const subItems = await fs.readdir(netCoreRuntime, { withFileTypes: true })
-    const latestVersion = subItems
-      .filter(subItem => subItem.isDirectory())
-      .map(subItem => semver.coerce(subItem.name))
-      .filter((subItem): subItem is SemVer => subItem !== null)
-      .sort((a, b) => a.compare(b))
-      .pop()
-
-    if (!latestVersion)
-      throw new Error('No Microsoft.NETCore.App runtime found.')
-
-    return path.join(netCoreRuntime, latestVersion.raw)
   }
 
   async CopyPackageAssembliesTo(

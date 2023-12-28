@@ -14393,7 +14393,6 @@ const toolCache = __importStar(__nccwpck_require__(7784));
 const zod_1 = __nccwpck_require__(3301);
 __nccwpck_require__(386);
 const target_framework_moniker_1 = __nccwpck_require__(5932);
-const semver_1 = __importDefault(__nccwpck_require__(1383));
 const process = __importStar(__nccwpck_require__(7282));
 const type_safe_error_1 = __importDefault(__nccwpck_require__(7403));
 const nuGetPackageSpecifierSchema = zod_1.z.object({
@@ -14511,17 +14510,7 @@ class InstallSteps {
         return path_1.default.join(homeDir, '.nuget', 'packages');
     }
     async GetRuntimeAssembliesDirectory() {
-        const netCoreRuntime = path_1.default.join(this.GetDotnetHome(), 'shared', 'Microsoft.NETCore.App');
-        const subItems = await promises_1.default.readdir(netCoreRuntime, { withFileTypes: true });
-        const latestVersion = subItems
-            .filter(subItem => subItem.isDirectory())
-            .map(subItem => semver_1.default.coerce(subItem.name))
-            .filter((subItem) => subItem !== null)
-            .sort((a, b) => a.compare(b))
-            .pop();
-        if (!latestVersion)
-            throw new Error('No Microsoft.NETCore.App runtime found.');
-        return path_1.default.join(netCoreRuntime, latestVersion.raw);
+        return path_1.default.join(this.GetDotnetHome(), 'packs', 'NETStandard.Library.Ref', '2.1.0', 'ref', 'netstandard2.1');
     }
     async CopyPackageAssembliesTo(targetFramework, fromPackageDir, toDir) {
         core.info(`Looking in ${fromPackageDir} for assemblies`);
