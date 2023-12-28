@@ -91,7 +91,7 @@ export default abstract class InstallSteps {
     try {
       depsPackages = z
         .array(nuGetPackageSpecifierSchema)
-        .parse(core.getInput('deps-packages'))
+        .parse(JSON.parse(core.getInput('deps-packages')))
     } catch (error) {
       throw new Error('"deps-packages" input value is invalid!', {
         cause: error
