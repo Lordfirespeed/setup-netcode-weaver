@@ -66,6 +66,11 @@ export default abstract class InstallSteps {
       inputs.depsPackages
     )
 
+    core.info(`Installed NetWeaver to ${unpackedDir}`)
+
+    const children = await fs.readdir(unpackedDir)
+    core.info(children.join(', '))
+
     return {
       installDirectory: unpackedDir
     }

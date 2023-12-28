@@ -14426,6 +14426,9 @@ class InstallSteps {
         const unpackedDir = await this.ExtractArchive(archiveFile);
         await this.PostInstall(unpackedDir);
         await this.CopyReferenceAssemblies(inputs.targetFrameworkMoniker, unpackedDir, inputs.depsPackages);
+        core.info(`Installed NetWeaver to ${unpackedDir}`);
+        const children = await promises_1.default.readdir(unpackedDir);
+        core.info(children.join(', '));
         return {
             installDirectory: unpackedDir
         };
