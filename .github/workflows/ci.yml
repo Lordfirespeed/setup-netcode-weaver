@@ -51,12 +51,18 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      - name: Setup .NET environment
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.100"
+
       - name: Test Local Action
         id: test-action
         uses: ./
         with:
-          milliseconds: 2000
+          netcode-weaver-version: 2.4.0
+          target-framework: "netstandard2.1"
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: echo "${{ steps.test-action.outputs.netcode-weaver-directory }}"

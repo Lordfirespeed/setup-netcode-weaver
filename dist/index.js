@@ -14495,7 +14495,7 @@ class InstallSteps {
         return await toolCache.downloadTool(this.GetDownloadUrl(netcodeWeaverVersion), path_1.default.join(this.GetTempDirectory(), this.GetArchiveName(netcodeWeaverVersion)));
     }
     async ExtractArchive(archivePath) {
-        return await toolCache.extractZip(archivePath);
+        return await toolCache.extractZip(archivePath, 'NetcodeWeaver');
     }
     async PostInstall(_) { }
     GetNuGetPackageCacheDirectory() {
