@@ -208,6 +208,7 @@ export default abstract class InstallSteps {
     fromPackageDir: string,
     toDir: string
   ): Promise<void> {
+    core.info(`Looking in ${fromPackageDir} for assemblies`)
     const subItems = await fs.readdir(fromPackageDir, { withFileTypes: true })
     const libOrRefDir = subItems
       .filter(subItem => subItem.isDirectory())
@@ -255,7 +256,7 @@ export default abstract class InstallSteps {
     const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory()
     const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory()
 
-    await Promise.allSettled([
+    await Promise.all([
       fs.copyFile(
         path.join(runtimeAssembliesDir, 'mscorlib.dll'),
         path.join(netcodeWeaverDepsDir, 'mscorlib.dll')

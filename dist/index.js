@@ -14524,6 +14524,7 @@ class InstallSteps {
         return path_1.default.join(netCoreRuntime, latestVersion.raw);
     }
     async CopyPackageAssembliesTo(targetFramework, fromPackageDir, toDir) {
+        core.info(`Looking in ${fromPackageDir} for assemblies`);
         const subItems = await promises_1.default.readdir(fromPackageDir, { withFileTypes: true });
         const libOrRefDir = subItems
             .filter(subItem => subItem.isDirectory())
@@ -14554,7 +14555,7 @@ class InstallSteps {
         const netcodeWeaverDepsDir = path_1.default.join(netcodeWeaverDirectory, 'deps');
         const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory();
         const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory();
-        await Promise.allSettled([
+        await Promise.all([
             promises_1.default.copyFile(path_1.default.join(runtimeAssembliesDir, 'mscorlib.dll'), path_1.default.join(netcodeWeaverDepsDir, 'mscorlib.dll')),
             promises_1.default.copyFile(path_1.default.join(runtimeAssembliesDir, 'netstandard.dll'), path_1.default.join(netcodeWeaverDepsDir, 'netstandard.dll')),
             ...packages
