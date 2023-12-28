@@ -68,7 +68,10 @@ jobs:
         with:
           netcode-weaver-version: 2.4.0
           target-framework: "netstandard2.1"
-          deps-packages: '[{"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}, {"id": "UnityEngine.Modules", "version": "2022.3.9"}]'
+          deps-packages: '[
+              {"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}, 
+              {"id": "UnityEngine.Modules", "version": "2022.3.9"}
+            ]'
 
       - name: Print Output
         id: output

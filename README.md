@@ -18,7 +18,10 @@ steps:
     uses: Lordfirespeed/setup-netcode-weaver@v0
     with:
       netcode-weaver-version: 2.4.0
-      deps-packages: '[{"id": "UnityEngine.Modules", "version": "2022.3.9"}, {"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}]'
+      deps-packages: '[
+          {"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}, 
+          {"id": "UnityEngine.Modules", "version": "2022.3.9"}
+        ]'
       target-framework: "netstandard2.1"
 ```
 
