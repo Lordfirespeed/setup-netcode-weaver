@@ -1,4 +1,7 @@
-export default function typeSafeError<T>(error: unknown, handler: (error: Error) => T): T {
+export default function typeSafeError<T>(
+  error: unknown,
+  handler: (error: Error) => T
+): T {
   if (!(error instanceof Error)) {
     if (error instanceof String) {
       return handler(new Error(error as string))
