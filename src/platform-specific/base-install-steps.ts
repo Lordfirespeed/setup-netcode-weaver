@@ -246,7 +246,10 @@ export default abstract class InstallSteps {
     if (!chosenTfm)
       throw new Error(`No consumable sources were found in ${fromPackageDir}`)
 
-    await fs.cp(path.join(libOrRefDir.path, chosenTfm.raw), toDir)
+    await fs.cp(
+      path.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw),
+      toDir
+    )
   }
 
   async CopyReferenceAssemblies(
