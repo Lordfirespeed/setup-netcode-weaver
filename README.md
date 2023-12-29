@@ -5,7 +5,7 @@
 [![Check dist/](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml/badge.svg)](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml)
 [![CodeQL](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.comLordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml)
 
-This action sets up **Netcode Weaver** for use in actions.
+This action sets up **Netcode Weaver** for use in workflows.
 
 ## Usage
 
