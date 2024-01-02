@@ -7,9 +7,10 @@ import { SemVer } from 'semver'
 import * as process from 'process'
 
 import '../lib/validation/semver-string-transformer'
+import '../lib/validation/target-framework-moniker-transformer'
 import {
-  TargetFrameworkMoniker,
-  targetFrameworkMonikerSchema
+  TargetFramework,
+  TargetFrameworkMoniker
 } from '../lib/target-framework-moniker'
 import typeSafeError from '../lib/type-safe-error'
 
@@ -19,9 +20,25 @@ const nuGetPackageSpecifierSchema = z.object({
 })
 type NuGetPackageSpecifier = z.infer<typeof nuGetPackageSpecifierSchema>
 
+const targetFrameworkMonikerSchema = z.union([
+  z
+    .string()
+    .targetFramework(
+      TargetFramework.NetStandard,
+      /^netstandard(?<version>[12]\.\d)$/
+    ),
+  z
+    .string()
+    .targetFramework(TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
+  z
+    .string()
+    .targetFramework(TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
+])
+
 type ActionInputs = {
   netcodeWeaverVersion: SemVer
   depsPackages: NuGetPackageSpecifier[]
+  depsPaths: string[]
   targetFrameworkMoniker: TargetFrameworkMoniker
 }
 
@@ -63,7 +80,8 @@ export default abstract class InstallSteps {
     await this.CopyReferenceAssemblies(
       inputs.targetFrameworkMoniker,
       unpackedDir,
-      inputs.depsPackages
+      inputs.depsPackages,
+      inputs.depsPaths
     )
 
     core.info(`Installed NetWeaver to ${unpackedDir}`)
@@ -106,6 +124,18 @@ export default abstract class InstallSteps {
       })
     }
 
+    let depsPaths: string[]
+    try {
+      depsPaths = z
+        .array(z.string())
+        .parse(JSON.parse(core.getInput('deps-paths')))
+    } catch (error) {
+      typeSafeError(error, core.error)
+      throw new Error('"deps-paths" input value is invalid!', {
+        cause: error
+      })
+    }
+
     let targetFrameworkMoniker: TargetFrameworkMoniker
     try {
       targetFrameworkMoniker = targetFrameworkMonikerSchema.parse(
@@ -123,6 +153,7 @@ export default abstract class InstallSteps {
     return {
       netcodeWeaverVersion,
       depsPackages,
+      depsPaths,
       targetFrameworkMoniker
     }
   }
@@ -248,22 +279,30 @@ export default abstract class InstallSteps {
   async CopyReferenceAssemblies(
     targetFramework: TargetFrameworkMoniker,
     netcodeWeaverDirectory: string,
-    packages: NuGetPackageSpecifier[]
+    packages: NuGetPackageSpecifier[],
+    paths: string[]
   ): Promise<void> {
     const netcodeWeaverDepsDir = path.join(netcodeWeaverDirectory, 'deps')
 
     const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory()
     const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory()
 
+    const allPaths = [
+      path.join(runtimeAssembliesDir, 'mscorlib.dll'),
+      path.join(runtimeAssembliesDir, 'netstandard.dll'),
+      ...paths
+    ]
+
     await Promise.all([
-      fs.copyFile(
-        path.join(runtimeAssembliesDir, 'mscorlib.dll'),
-        path.join(netcodeWeaverDepsDir, 'mscorlib.dll')
-      ),
-      fs.copyFile(
-        path.join(runtimeAssembliesDir, 'netstandard.dll'),
-        path.join(netcodeWeaverDepsDir, 'netstandard.dll')
-      ),
+      ...allPaths
+        .map(depPath => path.parse(depPath))
+        .map(
+          async depPath =>
+            await fs.copyFile(
+              path.format(depPath),
+              path.join(netcodeWeaverDepsDir, depPath.base)
+            )
+        ),
       ...packages
         .map(nuGetPackage =>
           path.join(

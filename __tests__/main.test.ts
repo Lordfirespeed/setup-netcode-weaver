@@ -74,6 +74,7 @@ describe('action', () => {
         .set('netcode-weaver-version', '2.4.0')
         .set('target-framework', 'netstandard2.1')
         .set('deps-packages', '[]')
+        .set('deps-paths', '[]')
     )
 
     _coreDebugMock = jest.spyOn(core, 'debug').mockImplementation()

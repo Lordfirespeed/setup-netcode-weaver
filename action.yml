@@ -15,6 +15,9 @@ inputs:
   deps-packages:
     description: 'JSON array of NuGet package IDs and versions to copy reference assemblies from.'
     default: "[]"
+  deps-paths:
+    description: 'JSON array of reference assembly string paths to copy from.'
+    default: "[]"
   target-framework:
     description: 'Target framework moniker used to resolve dependency assemblies.'
     required: true

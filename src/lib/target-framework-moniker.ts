@@ -1,4 +1,3 @@
-import { z, ZodEffects, ZodString } from 'zod'
 import semver, { SemVer } from 'semver'
 
 export enum TargetFramework {
@@ -194,72 +193,3 @@ export class NetFrameworkTargetFrameworkMoniker extends TargetFrameworkMoniker {
     )
   }
 }
-
-function tfmRegexTransformer(framework: TargetFramework, regex: RegExp) {
-  return function (
-    targetFrameworkMoniker: string,
-    context: z.RefinementCtx
-  ): TargetFrameworkMoniker {
-    const match = regex.exec(targetFrameworkMoniker)
-    if (match === null) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Not a valid ${framework} target framework moniker.`
-      })
-      return z.NEVER
-    }
-
-    if (match.groups === undefined) {
-      throw new Error(
-        'Invalid target framework moniker regex - missing capture groups.'
-      )
-    }
-
-    const { version } = match.groups
-    if (!version) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Not a valid ${framework} target framework moniker.`
-      })
-      return z.NEVER
-    }
-
-    return TargetFrameworkMoniker.New(
-      framework,
-      targetFrameworkMoniker,
-      version
-    )
-  }
-}
-
-declare module 'zod' {
-  interface ZodString {
-    targetFramework(
-      framework: TargetFramework,
-      regex: RegExp
-    ): ZodEffects<z.ZodString, TargetFrameworkMoniker, string>
-  }
-}
-
-ZodString.prototype.targetFramework = function (
-  framework: TargetFramework,
-  regex: RegExp
-): ZodEffects<z.ZodString, TargetFrameworkMoniker, string> {
-  return this.transform(tfmRegexTransformer(framework, regex))
-}
-
-// This should be amended to use `z.switch` when that API becomes available. https://github.com/colinhacks/zod/issues/2106
-export const targetFrameworkMonikerSchema = z.union([
-  z
-    .string()
-    .targetFramework(
-      TargetFramework.NetStandard,
-      /^netstandard(?<version>[12]\.\d)$/
-    ),
-  z
-    .string()
-    .targetFramework(TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
-  z
-    .string()
-    .targetFramework(TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
-])
