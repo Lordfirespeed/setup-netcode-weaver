@@ -14411,7 +14411,7 @@ class InstallSteps {
         };
     }
     SetOutputs(info) {
-        core.setOutput('netcode-weaver-directory', info.installDirectory);
+        core.setOutput('netcode-patcher-directory', info.installDirectory);
     }
     async InstallIfNecessary() {
         const existingInstallDir = toolCache.find('steamcmd', 'latest');
@@ -14426,11 +14426,11 @@ class InstallSteps {
     }
     async Install() {
         const inputs = this.GetInputs();
-        const archiveFile = await this.DownloadArchive(inputs.netcodeWeaverVersion);
+        const archiveFile = await this.DownloadArchive(inputs.netcodePatcherVersion);
         const unpackedDir = await this.ExtractArchive(archiveFile);
         await this.PostInstall(unpackedDir);
         await this.CopyReferenceAssemblies(inputs.targetFrameworkMoniker, unpackedDir, inputs.depsPackages, inputs.depsPaths);
-        core.info(`Installed NetWeaver to ${unpackedDir}`);
+        core.info(`Installed Netcode Patcher to ${unpackedDir}`);
         const children = await promises_1.default.readdir(path_1.default.join(unpackedDir, 'deps'));
         core.info(children.join(', '));
         return {
@@ -14438,9 +14438,9 @@ class InstallSteps {
         };
     }
     GetInputs() {
-        let netcodeWeaverVersion;
+        let netcodePatcherVersion;
         try {
-            netcodeWeaverVersion = zod_1.z
+            netcodePatcherVersion = zod_1.z
                 .string()
                 .semVer({ allowBuild: false, allowPrerelease: false })
                 .parse(core.getInput('netcode-weaver-version', {
@@ -14486,17 +14486,17 @@ class InstallSteps {
             });
         }
         return {
-            netcodeWeaverVersion,
+            netcodePatcherVersion,
             depsPackages,
             depsPaths,
             targetFrameworkMoniker
         };
     }
-    GetArchiveName(netcodeWeaverVersion) {
-        return `NetcodePatcher-${netcodeWeaverVersion.version}.zip`;
+    GetArchiveName(netcodePatcherVersion) {
+        return `NetcodePatcher-${netcodePatcherVersion.version}.zip`;
     }
-    GetDownloadUrl(netcodeWeaverVersion) {
-        return `https://github.com/EvaisaDev/UnityNetcodeWeaver/releases/download/${netcodeWeaverVersion.version}/${this.GetArchiveName(netcodeWeaverVersion)}`;
+    GetDownloadUrl(netcodePatcherVersion) {
+        return `https://github.com/EvaisaDev/UnityNetcodePatcher/releases/download/${netcodePatcherVersion.version}/${this.GetArchiveName(netcodePatcherVersion)}`;
     }
     GetTempDirectory() {
         if (process.env['RUNNER_TEMP'] === undefined) {
@@ -14504,14 +14504,14 @@ class InstallSteps {
         }
         return process.env['RUNNER_TEMP'];
     }
-    async DownloadArchive(netcodeWeaverVersion) {
-        return await toolCache.downloadTool(this.GetDownloadUrl(netcodeWeaverVersion), path_1.default.join(this.GetTempDirectory(), this.GetArchiveName(netcodeWeaverVersion)));
+    async DownloadArchive(netcodePatcherVersion) {
+        return await toolCache.downloadTool(this.GetDownloadUrl(netcodePatcherVersion), path_1.default.join(this.GetTempDirectory(), this.GetArchiveName(netcodePatcherVersion)));
     }
     ExtractToPath() {
         const homeDir = process.env['HOME'];
         if (!homeDir)
             throw new Error("$HOME environment variable not set - can't resolve destination directory.");
-        return path_1.default.join(homeDir, 'NetcodeWeaver');
+        return path_1.default.join(homeDir, 'netcodePatcher');
     }
     async ExtractArchive(archivePath) {
         return await toolCache.extractZip(archivePath, this.ExtractToPath());
@@ -14556,8 +14556,8 @@ class InstallSteps {
             recursive: true
         });
     }
-    async CopyReferenceAssemblies(targetFramework, netcodeWeaverDirectory, packages, paths) {
-        const netcodeWeaverDepsDir = path_1.default.join(netcodeWeaverDirectory, 'deps');
+    async CopyReferenceAssemblies(targetFramework, netcodePatcherDirectory, packages, paths) {
+        const netcodePatcherDepsDir = path_1.default.join(netcodePatcherDirectory, 'deps');
         const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory();
         const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory();
         const allPaths = [
@@ -14568,10 +14568,10 @@ class InstallSteps {
         await Promise.all([
             ...allPaths
                 .map(depPath => path_1.default.parse(depPath))
-                .map(async (depPath) => await promises_1.default.copyFile(path_1.default.format(depPath), path_1.default.join(netcodeWeaverDepsDir, depPath.base))),
+                .map(async (depPath) => await promises_1.default.copyFile(path_1.default.format(depPath), path_1.default.join(netcodePatcherDepsDir, depPath.base))),
             ...packages
                 .map(nuGetPackage => path_1.default.join(nuGetPackageCacheDir, nuGetPackage.id.toLowerCase(), nuGetPackage.version.raw))
-                .map(async (packageDir) => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodeWeaverDepsDir))
+                .map(async (packageDir) => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodePatcherDepsDir))
         ]);
     }
 }
@@ -14616,8 +14616,8 @@ class UnixInstallSteps extends base_install_steps_1.default {
     GetDotnetHome() {
         return path_1.default.join('/', 'usr', 'share', 'dotnet');
     }
-    async PostInstall(netcodeWeaverDirectory) {
-        await promises_1.default.writeFile(path_1.default.join(netcodeWeaverDirectory, 'NetcodePatcher.runtimeconfig.json'), JSON.stringify({
+    async PostInstall(netcodePatcherDirectory) {
+        await promises_1.default.writeFile(path_1.default.join(netcodePatcherDirectory, 'NetcodePatcher.runtimeconfig.json'), JSON.stringify({
             runtimeOptions: {
                 tfm: 'net8.0',
                 framework: {
