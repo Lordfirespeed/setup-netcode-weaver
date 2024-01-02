@@ -7,9 +7,9 @@ export default class UnixInstallSteps extends InstallSteps {
     return path.join('/', 'usr', 'share', 'dotnet')
   }
 
-  override async PostInstall(netcodeWeaverDirectory: string): Promise<void> {
+  override async PostInstall(netcodePatcherDirectory: string): Promise<void> {
     await fs.writeFile(
-      path.join(netcodeWeaverDirectory, 'NetcodePatcher.runtimeconfig.json'),
+      path.join(netcodePatcherDirectory, 'NetcodePatcher.runtimeconfig.json'),
       JSON.stringify({
         runtimeOptions: {
           tfm: 'net8.0',

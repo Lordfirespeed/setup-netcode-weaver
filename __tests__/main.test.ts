@@ -64,7 +64,7 @@ describe('action', () => {
 
     mockInputs(
       new Map()
-        .set('netcode-weaver-version', '2.4.0')
+        .set('netcode-patcher-version', '2.4.0')
         .set('target-framework', 'netstandard2.1')
         .set('deps-packages', '[]')
         .set('deps-paths', '[]')

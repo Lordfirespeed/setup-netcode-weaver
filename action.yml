@@ -1,5 +1,5 @@
-name: 'Setup NetCode Weaver'
-description: 'Sets up NetCode Weaver for patching Unity mods that depend on NetCode for GameObjects.'
+name: 'Setup NetCode Patcher'
+description: 'Sets up NetCode Patcher for patching Unity mods that depend on NetCode for GameObjects.'
 author: 'Lordfirespeed'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
@@ -9,8 +9,8 @@ branding:
 
 # Define your inputs here.
 inputs:
-  netcode-weaver-version:
-    description: 'NetCode weaver version to setup'
+  netcode-patcher-version:
+    description: 'NetCode patcher version to setup'
     required: true
   deps-packages:
     description: 'JSON array of NuGet package IDs and versions to copy reference assemblies from.'
@@ -23,8 +23,8 @@ inputs:
     required: true
 
 outputs:
-  netcode-weaver-directory:
-    description: 'Netcode Weaver installation directory'
+  netcode-patcher-directory:
+    description: 'Netcode Patcher installation directory'
 
 runs:
   using: node20

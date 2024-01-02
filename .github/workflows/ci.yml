@@ -66,7 +66,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          netcode-weaver-version: 2.4.0
+          netcode-patcher-version: 2.4.0
           target-framework: "netstandard2.1"
           deps-packages: '[
               {"id": "LethalCompany.GameLibs.Steam", "version": "45.0.2-alpha.1"}, 
@@ -75,4 +75,4 @@ jobs:
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.netcode-weaver-directory }}"
+        run: echo "${{ steps.test-action.outputs.netcode-patcher-directory }}"

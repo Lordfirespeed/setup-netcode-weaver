@@ -24,7 +24,7 @@ const targetFrameworkMonikerSchema = z.union([
 ])
 
 type ActionInputs = {
-  netcodeWeaverVersion: SemVer
+  netcodePatcherVersion: SemVer
   depsPackages: NuGetPackageSpecifier[]
   depsPaths: string[]
   targetFrameworkMoniker: TargetFrameworkMoniker
@@ -42,7 +42,7 @@ export default abstract class InstallSteps {
   }
 
   SetOutputs(info: OutputInfo): void {
-    core.setOutput('netcode-weaver-directory', info.installDirectory)
+    core.setOutput('netcode-patcher-directory', info.installDirectory)
   }
 
   async InstallIfNecessary(): Promise<void> {
@@ -61,7 +61,7 @@ export default abstract class InstallSteps {
 
   async Install(): Promise<OutputInfo> {
     const inputs = this.GetInputs()
-    const archiveFile = await this.DownloadArchive(inputs.netcodeWeaverVersion)
+    const archiveFile = await this.DownloadArchive(inputs.netcodePatcherVersion)
     const unpackedDir = await this.ExtractArchive(archiveFile)
 
     await this.PostInstall(unpackedDir)
@@ -72,7 +72,7 @@ export default abstract class InstallSteps {
       inputs.depsPaths
     )
 
-    core.info(`Installed NetWeaver to ${unpackedDir}`)
+    core.info(`Installed Netcode Patcher to ${unpackedDir}`)
 
     const children = await fs.readdir(path.join(unpackedDir, 'deps'))
     core.info(children.join(', '))
@@ -83,9 +83,9 @@ export default abstract class InstallSteps {
   }
 
   GetInputs(): ActionInputs {
-    let netcodeWeaverVersion: SemVer
+    let netcodePatcherVersion: SemVer
     try {
-      netcodeWeaverVersion = z
+      netcodePatcherVersion = z
         .string()
         .semVer({ allowBuild: false, allowPrerelease: false })
         .parse(
@@ -135,21 +135,21 @@ export default abstract class InstallSteps {
     }
 
     return {
-      netcodeWeaverVersion,
+      netcodePatcherVersion,
       depsPackages,
       depsPaths,
       targetFrameworkMoniker
     }
   }
 
-  GetArchiveName(netcodeWeaverVersion: SemVer): string {
-    return `NetcodePatcher-${netcodeWeaverVersion.version}.zip`
+  GetArchiveName(netcodePatcherVersion: SemVer): string {
+    return `NetcodePatcher-${netcodePatcherVersion.version}.zip`
   }
 
-  GetDownloadUrl(netcodeWeaverVersion: SemVer): string {
-    return `https://github.com/EvaisaDev/UnityNetcodeWeaver/releases/download/${
-      netcodeWeaverVersion.version
-    }/${this.GetArchiveName(netcodeWeaverVersion)}`
+  GetDownloadUrl(netcodePatcherVersion: SemVer): string {
+    return `https://github.com/EvaisaDev/UnityNetcodePatcher/releases/download/${
+      netcodePatcherVersion.version
+    }/${this.GetArchiveName(netcodePatcherVersion)}`
   }
 
   GetTempDirectory(): string {
@@ -159,10 +159,10 @@ export default abstract class InstallSteps {
     return process.env['RUNNER_TEMP']
   }
 
-  async DownloadArchive(netcodeWeaverVersion: SemVer): Promise<string> {
+  async DownloadArchive(netcodePatcherVersion: SemVer): Promise<string> {
     return await toolCache.downloadTool(
-      this.GetDownloadUrl(netcodeWeaverVersion),
-      path.join(this.GetTempDirectory(), this.GetArchiveName(netcodeWeaverVersion))
+      this.GetDownloadUrl(netcodePatcherVersion),
+      path.join(this.GetTempDirectory(), this.GetArchiveName(netcodePatcherVersion))
     )
   }
 
@@ -170,7 +170,7 @@ export default abstract class InstallSteps {
     const homeDir = process.env['HOME']
     if (!homeDir) throw new Error("$HOME environment variable not set - can't resolve destination directory.")
 
-    return path.join(homeDir, 'NetcodeWeaver')
+    return path.join(homeDir, 'netcodePatcher')
   }
 
   async ExtractArchive(archivePath: string): Promise<string> {
@@ -231,11 +231,11 @@ export default abstract class InstallSteps {
 
   async CopyReferenceAssemblies(
     targetFramework: TargetFrameworkMoniker,
-    netcodeWeaverDirectory: string,
+    netcodePatcherDirectory: string,
     packages: NuGetPackageSpecifier[],
     paths: string[]
   ): Promise<void> {
-    const netcodeWeaverDepsDir = path.join(netcodeWeaverDirectory, 'deps')
+    const netcodePatcherDepsDir = path.join(netcodePatcherDirectory, 'deps')
 
     const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory()
     const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory()
@@ -249,10 +249,10 @@ export default abstract class InstallSteps {
     await Promise.all([
       ...allPaths
         .map(depPath => path.parse(depPath))
-        .map(async depPath => await fs.copyFile(path.format(depPath), path.join(netcodeWeaverDepsDir, depPath.base))),
+        .map(async depPath => await fs.copyFile(path.format(depPath), path.join(netcodePatcherDepsDir, depPath.base))),
       ...packages
         .map(nuGetPackage => path.join(nuGetPackageCacheDir, nuGetPackage.id.toLowerCase(), nuGetPackage.version.raw))
-        .map(async packageDir => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodeWeaverDepsDir))
+        .map(async packageDir => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodePatcherDepsDir))
     ])
   }
 }
