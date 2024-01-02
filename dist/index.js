@@ -14077,8 +14077,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.targetFrameworkMonikerSchema = exports.NetFrameworkTargetFrameworkMoniker = exports.NetCoreTargetFrameworkMoniker = exports.NetStandardTargetFrameworkMoniker = exports.TargetFrameworkMoniker = exports.TargetFramework = void 0;
-const zod_1 = __nccwpck_require__(3301);
+exports.NetFrameworkTargetFrameworkMoniker = exports.NetCoreTargetFrameworkMoniker = exports.NetStandardTargetFrameworkMoniker = exports.TargetFrameworkMoniker = exports.TargetFramework = void 0;
 const semver_1 = __importDefault(__nccwpck_require__(1383));
 var TargetFramework;
 (function (TargetFramework) {
@@ -14182,7 +14181,7 @@ class NetCoreTargetFrameworkMoniker extends TargetFrameworkMoniker {
         ['net1.0', new NetStandardTargetFrameworkMoniker('netstandard1.6', '1.6')]
     ]);
     SupportedNetStandardTarget() {
-        return (NetCoreTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null);
+        return NetCoreTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null;
     }
 }
 exports.NetCoreTargetFrameworkMoniker = NetCoreTargetFrameworkMoniker;
@@ -14202,49 +14201,10 @@ class NetFrameworkTargetFrameworkMoniker extends TargetFrameworkMoniker {
         ['net45', new NetStandardTargetFrameworkMoniker('netstandard1.1', '1.1')]
     ]);
     SupportedNetStandardTarget() {
-        return (NetFrameworkTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null);
+        return NetFrameworkTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null;
     }
 }
 exports.NetFrameworkTargetFrameworkMoniker = NetFrameworkTargetFrameworkMoniker;
-function tfmRegexTransformer(framework, regex) {
-    return function (targetFrameworkMoniker, context) {
-        const match = regex.exec(targetFrameworkMoniker);
-        if (match === null) {
-            context.addIssue({
-                code: zod_1.z.ZodIssueCode.custom,
-                message: `Not a valid ${framework} target framework moniker.`
-            });
-            return zod_1.z.NEVER;
-        }
-        if (match.groups === undefined) {
-            throw new Error('Invalid target framework moniker regex - missing capture groups.');
-        }
-        const { version } = match.groups;
-        if (!version) {
-            context.addIssue({
-                code: zod_1.z.ZodIssueCode.custom,
-                message: `Not a valid ${framework} target framework moniker.`
-            });
-            return zod_1.z.NEVER;
-        }
-        return TargetFrameworkMoniker.New(framework, targetFrameworkMoniker, version);
-    };
-}
-zod_1.ZodString.prototype.targetFramework = function (framework, regex) {
-    return this.transform(tfmRegexTransformer(framework, regex));
-};
-// This should be amended to use `z.switch` when that API becomes available. https://github.com/colinhacks/zod/issues/2106
-exports.targetFrameworkMonikerSchema = zod_1.z.union([
-    zod_1.z
-        .string()
-        .targetFramework(TargetFramework.NetStandard, /^netstandard(?<version>[12]\.\d)$/),
-    zod_1.z
-        .string()
-        .targetFramework(TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
-    zod_1.z
-        .string()
-        .targetFramework(TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
-]);
 
 
 /***/ }),
@@ -14324,6 +14284,45 @@ zod_1.ZodString.prototype.semVer = function (options) {
 
 /***/ }),
 
+/***/ 1926:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const zod_1 = __nccwpck_require__(3301);
+const target_framework_moniker_1 = __nccwpck_require__(5932);
+function tfmRegexTransformer(framework, regex) {
+    return function (targetFrameworkMoniker, context) {
+        const match = regex.exec(targetFrameworkMoniker);
+        if (match === null) {
+            context.addIssue({
+                code: zod_1.z.ZodIssueCode.custom,
+                message: `Not a valid ${framework} target framework moniker.`
+            });
+            return zod_1.z.NEVER;
+        }
+        if (match.groups === undefined) {
+            throw new Error('Invalid target framework moniker regex - missing capture groups.');
+        }
+        const { version } = match.groups;
+        if (!version) {
+            context.addIssue({
+                code: zod_1.z.ZodIssueCode.custom,
+                message: `Not a valid ${framework} target framework moniker.`
+            });
+            return zod_1.z.NEVER;
+        }
+        return target_framework_moniker_1.TargetFrameworkMoniker.New(framework, targetFrameworkMoniker, version);
+    };
+}
+zod_1.ZodString.prototype.targetFramework = function (framework, regex) {
+    return this.transform(tfmRegexTransformer(framework, regex));
+};
+
+
+/***/ }),
+
 /***/ 399:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -14393,12 +14392,18 @@ const toolCache = __importStar(__nccwpck_require__(7784));
 const zod_1 = __nccwpck_require__(3301);
 const process = __importStar(__nccwpck_require__(7282));
 __nccwpck_require__(386);
+__nccwpck_require__(1926);
 const target_framework_moniker_1 = __nccwpck_require__(5932);
 const type_safe_error_1 = __importDefault(__nccwpck_require__(7403));
 const nuGetPackageSpecifierSchema = zod_1.z.object({
     id: zod_1.z.string(),
     version: zod_1.z.string().semVer({ allowBuild: false })
 });
+const targetFrameworkMonikerSchema = zod_1.z.union([
+    zod_1.z.string().targetFramework(target_framework_moniker_1.TargetFramework.NetStandard, /^netstandard(?<version>[12]\.\d)$/),
+    zod_1.z.string().targetFramework(target_framework_moniker_1.TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
+    zod_1.z.string().targetFramework(target_framework_moniker_1.TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
+]);
 class InstallSteps {
     GetInfo(installDirectory) {
         return {
@@ -14424,7 +14429,7 @@ class InstallSteps {
         const archiveFile = await this.DownloadArchive(inputs.netcodeWeaverVersion);
         const unpackedDir = await this.ExtractArchive(archiveFile);
         await this.PostInstall(unpackedDir);
-        await this.CopyReferenceAssemblies(inputs.targetFrameworkMoniker, unpackedDir, inputs.depsPackages);
+        await this.CopyReferenceAssemblies(inputs.targetFrameworkMoniker, unpackedDir, inputs.depsPackages, inputs.depsPaths);
         core.info(`Installed NetWeaver to ${unpackedDir}`);
         const children = await promises_1.default.readdir(path_1.default.join(unpackedDir, 'deps'));
         core.info(children.join(', '));
@@ -14450,9 +14455,7 @@ class InstallSteps {
         }
         let depsPackages;
         try {
-            depsPackages = zod_1.z
-                .array(nuGetPackageSpecifierSchema)
-                .parse(JSON.parse(core.getInput('deps-packages')));
+            depsPackages = zod_1.z.array(nuGetPackageSpecifierSchema).parse(JSON.parse(core.getInput('deps-packages')));
         }
         catch (error) {
             (0, type_safe_error_1.default)(error, core.error);
@@ -14460,9 +14463,19 @@ class InstallSteps {
                 cause: error
             });
         }
+        let depsPaths;
+        try {
+            depsPaths = zod_1.z.array(zod_1.z.string()).parse(JSON.parse(core.getInput('deps-paths')));
+        }
+        catch (error) {
+            (0, type_safe_error_1.default)(error, core.error);
+            throw new Error('"deps-paths" input value is invalid!', {
+                cause: error
+            });
+        }
         let targetFrameworkMoniker;
         try {
-            targetFrameworkMoniker = target_framework_moniker_1.targetFrameworkMonikerSchema.parse(core.getInput('target-framework', {
+            targetFrameworkMoniker = targetFrameworkMonikerSchema.parse(core.getInput('target-framework', {
                 required: true
             }));
         }
@@ -14475,6 +14488,7 @@ class InstallSteps {
         return {
             netcodeWeaverVersion,
             depsPackages,
+            depsPaths,
             targetFrameworkMoniker
         };
     }
@@ -14532,7 +14546,7 @@ class InstallSteps {
         const tfmDirs = await promises_1.default.readdir(path_1.default.join(fromPackageDir, libOrRefDir.name), { withFileTypes: true });
         const tfms = tfmDirs
             .filter(subItem => subItem.isDirectory())
-            .map(subItem => target_framework_moniker_1.targetFrameworkMonikerSchema.safeParse(subItem.name))
+            .map(subItem => targetFrameworkMonikerSchema.safeParse(subItem.name))
             .filter((parseResult) => parseResult.success)
             .map(parseResult => parseResult.data);
         const chosenTfm = targetFramework.MostPreferableForConsumption(tfms);
@@ -14542,13 +14556,19 @@ class InstallSteps {
             recursive: true
         });
     }
-    async CopyReferenceAssemblies(targetFramework, netcodeWeaverDirectory, packages) {
+    async CopyReferenceAssemblies(targetFramework, netcodeWeaverDirectory, packages, paths) {
         const netcodeWeaverDepsDir = path_1.default.join(netcodeWeaverDirectory, 'deps');
         const nuGetPackageCacheDir = this.GetNuGetPackageCacheDirectory();
         const runtimeAssembliesDir = await this.GetRuntimeAssembliesDirectory();
+        const allPaths = [
+            path_1.default.join(runtimeAssembliesDir, 'mscorlib.dll'),
+            path_1.default.join(runtimeAssembliesDir, 'netstandard.dll'),
+            ...paths
+        ];
         await Promise.all([
-            promises_1.default.copyFile(path_1.default.join(runtimeAssembliesDir, 'mscorlib.dll'), path_1.default.join(netcodeWeaverDepsDir, 'mscorlib.dll')),
-            promises_1.default.copyFile(path_1.default.join(runtimeAssembliesDir, 'netstandard.dll'), path_1.default.join(netcodeWeaverDepsDir, 'netstandard.dll')),
+            ...allPaths
+                .map(depPath => path_1.default.parse(depPath))
+                .map(async (depPath) => await promises_1.default.copyFile(path_1.default.format(depPath), path_1.default.join(netcodeWeaverDepsDir, depPath.base))),
             ...packages
                 .map(nuGetPackage => path_1.default.join(nuGetPackageCacheDir, nuGetPackage.id.toLowerCase(), nuGetPackage.version.raw))
                 .map(async (packageDir) => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodeWeaverDepsDir))
