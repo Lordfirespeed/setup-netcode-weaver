@@ -89,13 +89,13 @@ export default abstract class InstallSteps {
         .string()
         .semVer({ allowBuild: false, allowPrerelease: false })
         .parse(
-          core.getInput('netcode-weaver-version', {
+          core.getInput('netcode-patcher-version', {
             required: true
           })
         )
     } catch (error) {
       typeSafeError(error, core.error)
-      throw new Error('"netcode-weaver-version" input value is invalid!', {
+      throw new Error('"netcode-patcher-version" input value is invalid!', {
         cause: error
       })
     }

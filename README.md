@@ -1,9 +1,9 @@
 # Setup Netcode Patcher
 
-[![GitHub Super-Linter](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/ci.yml/badge.svg)
-[![Check dist/](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml/badge.svg)](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/Lordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.comLordfirespeed/setup-netcode-weaver/actions/workflows/codeql-analysis.yml)
+[![GitHub Super-Linter](https://github.com/Lordfirespeed/setup-netcode-patcher/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
+![CI](https://github.com/Lordfirespeed/setup-netcode-patcher/actions/workflows/ci.yml/badge.svg)
+[![Check dist/](https://github.com/Lordfirespeed/setup-netcode-patcher/actions/workflows/check-dist.yml/badge.svg)](https://github.com/Lordfirespeed/setup-netcode-patcher/actions/workflows/check-dist.yml)
+[![CodeQL](https://github.com/Lordfirespeed/setup-netcode-patcher/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.comLordfirespeed/setup-netcode-patcher/actions/workflows/codeql-analysis.yml)
 
 This action sets up [UnityNetcodePatcher](https://github.com/EvaisaDev/UnityNetcodePatcher) for use in workflows.
 
@@ -36,6 +36,6 @@ steps:
 
 ## Outputs
 
-| name       | description                             |
-|------------|-----------------------------------------|
-| directory  | Directory where Netweaver was installed |
+| name       | description                                   |
+|------------|-----------------------------------------------|
+| directory  | Directory where Netcode Patcher was installed |

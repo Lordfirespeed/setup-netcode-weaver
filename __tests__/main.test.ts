@@ -101,10 +101,10 @@ describe('action', () => {
     expect(_extractZipMock).toHaveBeenCalled()
   })
 
-  it('sets netcode-weaver-directory output', async () => {
+  it('sets netcode-patcher-directory output', async () => {
     await main.default()
     expect(runMock).toHaveReturned()
 
-    expect(_setOutputMock).toHaveBeenCalledWith('netcode-weaver-directory', expect.any(String))
+    expect(_setOutputMock).toHaveBeenCalledWith('netcode-patcher-directory', expect.any(String))
   })
 })
