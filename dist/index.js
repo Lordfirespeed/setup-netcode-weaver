@@ -14443,13 +14443,13 @@ class InstallSteps {
             netcodePatcherVersion = zod_1.z
                 .string()
                 .semVer({ allowBuild: false, allowPrerelease: false })
-                .parse(core.getInput('netcode-weaver-version', {
+                .parse(core.getInput('netcode-patcher-version', {
                 required: true
             }));
         }
         catch (error) {
             (0, type_safe_error_1.default)(error, core.error);
-            throw new Error('"netcode-weaver-version" input value is invalid!', {
+            throw new Error('"netcode-patcher-version" input value is invalid!', {
                 cause: error
             });
         }
