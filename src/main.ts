@@ -1,14 +1,8 @@
 import { platform } from 'os'
 
-import {
-  InstallSteps,
-  UnixInstallSteps,
-  WindowsInstallSteps
-} from './platform-specific'
+import { InstallSteps, UnixInstallSteps, WindowsInstallSteps } from './platform-specific'
 
-function chooseAppropriateInstallSteps(
-  platformIdentifier: NodeJS.Platform
-): InstallSteps {
+function chooseAppropriateInstallSteps(platformIdentifier: NodeJS.Platform): InstallSteps {
   if (platformIdentifier === 'darwin') return new UnixInstallSteps()
 
   if (platformIdentifier === 'linux') return new UnixInstallSteps()

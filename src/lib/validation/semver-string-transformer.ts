@@ -14,8 +14,7 @@ const semVerTransformOptionsSchema = z
 function semverTransformer(
   options?: z.input<typeof semVerTransformOptionsSchema>
 ): (version: string, context: z.RefinementCtx) => SemVer {
-  const { allowBuild, allowPrerelease } =
-    semVerTransformOptionsSchema.parse(options)
+  const { allowBuild, allowPrerelease } = semVerTransformOptionsSchema.parse(options)
 
   return function (version: string, context: z.RefinementCtx): SemVer {
     const parsed = semver.parse(version)
@@ -49,9 +48,7 @@ function semverTransformer(
 
 declare module 'zod' {
   interface ZodString {
-    semVer(
-      options?: z.input<typeof semVerTransformOptionsSchema>
-    ): ZodEffects<z.ZodString, SemVer, string>
+    semVer(options?: z.input<typeof semVerTransformOptionsSchema>): ZodEffects<z.ZodString, SemVer, string>
   }
 }
 

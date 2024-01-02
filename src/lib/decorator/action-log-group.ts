@@ -3,11 +3,7 @@ import * as core from '@actions/core'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function ActionLogGroupAsync(groupTitle: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const oldFunction = descriptor.value
 
     descriptor.value = async function (...args: unknown[]) {
@@ -22,11 +18,7 @@ export function ActionLogGroupAsync(groupTitle: string) {
 }
 
 export function ActionLogGroup(groupTitle: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const oldFunction = descriptor.value
 
     descriptor.value = function (...args: unknown[]) {

@@ -11,41 +11,18 @@ export abstract class TargetFrameworkMoniker {
   raw: string
   version: SemVer
 
-  static New(
-    type: TargetFramework.NetStandard,
-    raw: string,
-    version: string
-  ): NetStandardTargetFrameworkMoniker
-  static New(
-    type: TargetFramework.NetCore,
-    raw: string,
-    version: string
-  ): NetCoreTargetFrameworkMoniker
-  static New(
-    type: TargetFramework.NetFramework,
-    raw: string,
-    version: string
-  ): NetFrameworkTargetFrameworkMoniker
-  static New(
-    type: TargetFramework,
-    raw: string,
-    version: string
-  ): TargetFrameworkMoniker
-  static New(
-    type: TargetFramework,
-    raw: string,
-    version: string
-  ): TargetFrameworkMoniker {
+  static New(type: TargetFramework.NetStandard, raw: string, version: string): NetStandardTargetFrameworkMoniker
+  static New(type: TargetFramework.NetCore, raw: string, version: string): NetCoreTargetFrameworkMoniker
+  static New(type: TargetFramework.NetFramework, raw: string, version: string): NetFrameworkTargetFrameworkMoniker
+  static New(type: TargetFramework, raw: string, version: string): TargetFrameworkMoniker
+  static New(type: TargetFramework, raw: string, version: string): TargetFrameworkMoniker {
     switch (type) {
       case TargetFramework.NetStandard:
         return new NetStandardTargetFrameworkMoniker(raw, version)
       case TargetFramework.NetCore:
         return new NetCoreTargetFrameworkMoniker(raw, version)
       case TargetFramework.NetFramework:
-        return new NetFrameworkTargetFrameworkMoniker(
-          raw,
-          version.split('').join('.')
-        )
+        return new NetFrameworkTargetFrameworkMoniker(raw, version.split('').join('.'))
     }
   }
 
@@ -53,17 +30,14 @@ export abstract class TargetFrameworkMoniker {
     this.raw = raw
     const coercedVersion = semver.coerce(version)
     if (coercedVersion === null)
-      throw new Error(
-        `Couldn't coerce target framework moniker version '${version}' to SemVer.`
-      )
+      throw new Error(`Couldn't coerce target framework moniker version '${version}' to SemVer.`)
     this.version = coercedVersion
   }
 
   CanConsume(other: TargetFrameworkMoniker): boolean {
     if (other.type === this.type) return this.version >= other.version
 
-    if (other.type === TargetFramework.NetStandard)
-      return this.SupportedNetStandardTarget()?.CanConsume(other) ?? false
+    if (other.type === TargetFramework.NetStandard) return this.SupportedNetStandardTarget()?.CanConsume(other) ?? false
 
     return false
   }
@@ -84,17 +58,12 @@ export abstract class TargetFrameworkMoniker {
       return -1
     }
 
-    if (other.type === TargetFramework.NetStandard)
-      return -other.isPreferableTo(this.SupportedNetStandardTarget())
+    if (other.type === TargetFramework.NetStandard) return -other.isPreferableTo(this.SupportedNetStandardTarget())
 
-    throw new Error(
-      `Cannot compare preferability of ${this.type} and ${other.type} targets as they are incompatible.`
-    )
+    throw new Error(`Cannot compare preferability of ${this.type} and ${other.type} targets as they are incompatible.`)
   }
 
-  MostPreferableForConsumption(
-    targets: TargetFrameworkMoniker[]
-  ): TargetFrameworkMoniker | null {
+  MostPreferableForConsumption(targets: TargetFrameworkMoniker[]): TargetFrameworkMoniker | null {
     return (
       targets
         .filter(target => this.CanConsume(target))
@@ -135,10 +104,7 @@ export class NetStandardTargetFrameworkMoniker extends TargetFrameworkMoniker {
 export class NetCoreTargetFrameworkMoniker extends TargetFrameworkMoniker {
   type = TargetFramework.NetCore
 
-  private static _supportedNetStandardTargets = new Map<
-    string,
-    NetStandardTargetFrameworkMoniker
-  >([
+  private static _supportedNetStandardTargets = new Map<string, NetStandardTargetFrameworkMoniker>([
     ['net8.0', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.1')],
     ['net7.0', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.1')],
     ['net6.0', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.1')],
@@ -155,21 +121,14 @@ export class NetCoreTargetFrameworkMoniker extends TargetFrameworkMoniker {
   ])
 
   override SupportedNetStandardTarget(): NetStandardTargetFrameworkMoniker | null {
-    return (
-      NetCoreTargetFrameworkMoniker._supportedNetStandardTargets.get(
-        this.raw
-      ) ?? null
-    )
+    return NetCoreTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null
   }
 }
 
 export class NetFrameworkTargetFrameworkMoniker extends TargetFrameworkMoniker {
   type = TargetFramework.NetFramework
 
-  private static _supportedNetStandardTargets = new Map<
-    string,
-    NetStandardTargetFrameworkMoniker
-  >([
+  private static _supportedNetStandardTargets = new Map<string, NetStandardTargetFrameworkMoniker>([
     ['net481', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.0')],
     ['net48', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.0')],
     ['net472', new NetStandardTargetFrameworkMoniker('netstandard2.1', '2.0')],
@@ -186,10 +145,6 @@ export class NetFrameworkTargetFrameworkMoniker extends TargetFrameworkMoniker {
   ])
 
   override SupportedNetStandardTarget(): NetStandardTargetFrameworkMoniker | null {
-    return (
-      NetFrameworkTargetFrameworkMoniker._supportedNetStandardTargets.get(
-        this.raw
-      ) ?? null
-    )
+    return NetFrameworkTargetFrameworkMoniker._supportedNetStandardTargets.get(this.raw) ?? null
   }
 }

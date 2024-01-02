@@ -1,14 +1,8 @@
 import { z, ZodEffects, ZodString } from 'zod'
-import {
-  TargetFramework,
-  TargetFrameworkMoniker
-} from '../target-framework-moniker'
+import { TargetFramework, TargetFrameworkMoniker } from '../target-framework-moniker'
 
 function tfmRegexTransformer(framework: TargetFramework, regex: RegExp) {
-  return function (
-    targetFrameworkMoniker: string,
-    context: z.RefinementCtx
-  ): TargetFrameworkMoniker {
+  return function (targetFrameworkMoniker: string, context: z.RefinementCtx): TargetFrameworkMoniker {
     const match = regex.exec(targetFrameworkMoniker)
     if (match === null) {
       context.addIssue({
@@ -19,9 +13,7 @@ function tfmRegexTransformer(framework: TargetFramework, regex: RegExp) {
     }
 
     if (match.groups === undefined) {
-      throw new Error(
-        'Invalid target framework moniker regex - missing capture groups.'
-      )
+      throw new Error('Invalid target framework moniker regex - missing capture groups.')
     }
 
     const { version } = match.groups
@@ -33,20 +25,13 @@ function tfmRegexTransformer(framework: TargetFramework, regex: RegExp) {
       return z.NEVER
     }
 
-    return TargetFrameworkMoniker.New(
-      framework,
-      targetFrameworkMoniker,
-      version
-    )
+    return TargetFrameworkMoniker.New(framework, targetFrameworkMoniker, version)
   }
 }
 
 declare module 'zod' {
   interface ZodString {
-    targetFramework(
-      framework: TargetFramework,
-      regex: RegExp
-    ): ZodEffects<z.ZodString, TargetFrameworkMoniker, string>
+    targetFramework(framework: TargetFramework, regex: RegExp): ZodEffects<z.ZodString, TargetFrameworkMoniker, string>
   }
 }
 

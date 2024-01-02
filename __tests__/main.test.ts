@@ -28,10 +28,7 @@ let _setOutputMock: jest.SpyInstance
 // Mock the GitHub Actions tool cache library
 let _findToolMock: jest.SpyInstance
 let _downloadToolMock: jest.SpyInstance
-let _extractZipMock: jest.SpyInstance<
-  Promise<string>,
-  [file: string, dest?: string | undefined]
->
+let _extractZipMock: jest.SpyInstance<Promise<string>, [file: string, dest?: string | undefined]>
 
 // Mock the filesystem/promises library
 let _readdirMock: jest.SpyInstance
@@ -51,15 +48,11 @@ describe('action', () => {
 
   function mockPosixImplementations(): void {
     const temp_dir = process.env.RUNNER_TEMP
-    if (!temp_dir)
-      throw new Error('$RUNNER_TEMP must be defined to mock implementations')
+    if (!temp_dir) throw new Error('$RUNNER_TEMP must be defined to mock implementations')
 
-    _downloadToolMock.mockImplementation(
-      async (url, dest) => dest ?? path.posix.join(temp_dir, '[download-uuid]')
-    )
+    _downloadToolMock.mockImplementation(async (url, dest) => dest ?? path.posix.join(temp_dir, '[download-uuid]'))
     _extractZipMock.mockImplementation(
-      async (archivePath, dest) =>
-        dest ?? path.posix.join(temp_dir, '[extract-zip-uuid]')
+      async (archivePath, dest) => dest ?? path.posix.join(temp_dir, '[extract-zip-uuid]')
     )
   }
 
@@ -85,9 +78,7 @@ describe('action', () => {
     _setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
 
     _findToolMock = jest.spyOn(toolCache, 'find').mockReturnValue('')
-    _downloadToolMock = jest
-      .spyOn(toolCache, 'downloadTool')
-      .mockImplementation()
+    _downloadToolMock = jest.spyOn(toolCache, 'downloadTool').mockImplementation()
     _extractZipMock = jest.spyOn(toolCache, 'extractZip').mockImplementation()
 
     _readdirMock = jest.spyOn(fs, 'readdir').mockResolvedValue([])
@@ -114,9 +105,6 @@ describe('action', () => {
     await main.default()
     expect(runMock).toHaveReturned()
 
-    expect(_setOutputMock).toHaveBeenCalledWith(
-      'netcode-weaver-directory',
-      expect.any(String)
-    )
+    expect(_setOutputMock).toHaveBeenCalledWith('netcode-weaver-directory', expect.any(String))
   })
 })

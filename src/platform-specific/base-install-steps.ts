@@ -8,10 +8,7 @@ import * as process from 'process'
 
 import '../lib/validation/semver-string-transformer'
 import '../lib/validation/target-framework-moniker-transformer'
-import {
-  TargetFramework,
-  TargetFrameworkMoniker
-} from '../lib/target-framework-moniker'
+import { TargetFramework, TargetFrameworkMoniker } from '../lib/target-framework-moniker'
 import typeSafeError from '../lib/type-safe-error'
 
 const nuGetPackageSpecifierSchema = z.object({
@@ -21,18 +18,9 @@ const nuGetPackageSpecifierSchema = z.object({
 type NuGetPackageSpecifier = z.infer<typeof nuGetPackageSpecifierSchema>
 
 const targetFrameworkMonikerSchema = z.union([
-  z
-    .string()
-    .targetFramework(
-      TargetFramework.NetStandard,
-      /^netstandard(?<version>[12]\.\d)$/
-    ),
-  z
-    .string()
-    .targetFramework(TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
-  z
-    .string()
-    .targetFramework(TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
+  z.string().targetFramework(TargetFramework.NetStandard, /^netstandard(?<version>[12]\.\d)$/),
+  z.string().targetFramework(TargetFramework.NetCore, /^net(?<version>[5-8]\.0)$/),
+  z.string().targetFramework(TargetFramework.NetFramework, /^net(?<version>\d{2,3})$/)
 ])
 
 type ActionInputs = {
@@ -114,9 +102,7 @@ export default abstract class InstallSteps {
 
     let depsPackages: NuGetPackageSpecifier[]
     try {
-      depsPackages = z
-        .array(nuGetPackageSpecifierSchema)
-        .parse(JSON.parse(core.getInput('deps-packages')))
+      depsPackages = z.array(nuGetPackageSpecifierSchema).parse(JSON.parse(core.getInput('deps-packages')))
     } catch (error) {
       typeSafeError(error, core.error)
       throw new Error('"deps-packages" input value is invalid!', {
@@ -126,9 +112,7 @@ export default abstract class InstallSteps {
 
     let depsPaths: string[]
     try {
-      depsPaths = z
-        .array(z.string())
-        .parse(JSON.parse(core.getInput('deps-paths')))
+      depsPaths = z.array(z.string()).parse(JSON.parse(core.getInput('deps-paths')))
     } catch (error) {
       typeSafeError(error, core.error)
       throw new Error('"deps-paths" input value is invalid!', {
@@ -178,19 +162,13 @@ export default abstract class InstallSteps {
   async DownloadArchive(netcodeWeaverVersion: SemVer): Promise<string> {
     return await toolCache.downloadTool(
       this.GetDownloadUrl(netcodeWeaverVersion),
-      path.join(
-        this.GetTempDirectory(),
-        this.GetArchiveName(netcodeWeaverVersion)
-      )
+      path.join(this.GetTempDirectory(), this.GetArchiveName(netcodeWeaverVersion))
     )
   }
 
   ExtractToPath(): string {
     const homeDir = process.env['HOME']
-    if (!homeDir)
-      throw new Error(
-        "$HOME environment variable not set - can't resolve destination directory."
-      )
+    if (!homeDir) throw new Error("$HOME environment variable not set - can't resolve destination directory.")
 
     return path.join(homeDir, 'NetcodeWeaver')
   }
@@ -203,10 +181,7 @@ export default abstract class InstallSteps {
 
   GetNuGetPackageCacheDirectory(): string {
     const homeDir = process.env['HOME']
-    if (!homeDir)
-      throw new Error(
-        "$HOME environment variable not set - can't find NuGet package cache directory."
-      )
+    if (!homeDir) throw new Error("$HOME environment variable not set - can't find NuGet package cache directory.")
 
     return path.join(homeDir, '.nuget', 'packages')
   }
@@ -214,14 +189,7 @@ export default abstract class InstallSteps {
   abstract GetDotnetHome(): string
 
   async GetRuntimeAssembliesDirectory(): Promise<string> {
-    return path.join(
-      this.GetDotnetHome(),
-      'packs',
-      'NETStandard.Library.Ref',
-      '2.1.0',
-      'ref',
-      'netstandard2.1'
-    )
+    return path.join(this.GetDotnetHome(), 'packs', 'NETStandard.Library.Ref', '2.1.0', 'ref', 'netstandard2.1')
   }
 
   async CopyPackageAssembliesTo(
@@ -241,39 +209,24 @@ export default abstract class InstallSteps {
       .pop()
 
     if (!libOrRefDir) {
-      core.warning(
-        `Couldn't find lib/ref folder in ${fromPackageDir}, skipping`
-      )
+      core.warning(`Couldn't find lib/ref folder in ${fromPackageDir}, skipping`)
       return
     }
 
-    const tfmDirs = await fs.readdir(
-      path.join(fromPackageDir, libOrRefDir.name),
-      { withFileTypes: true }
-    )
+    const tfmDirs = await fs.readdir(path.join(fromPackageDir, libOrRefDir.name), { withFileTypes: true })
     const tfms = tfmDirs
       .filter(subItem => subItem.isDirectory())
       .map(subItem => targetFrameworkMonikerSchema.safeParse(subItem.name))
-      .filter(
-        (
-          parseResult
-        ): parseResult is SafeParseSuccess<TargetFrameworkMoniker> =>
-          parseResult.success
-      )
+      .filter((parseResult): parseResult is SafeParseSuccess<TargetFrameworkMoniker> => parseResult.success)
       .map(parseResult => parseResult.data)
 
     const chosenTfm = targetFramework.MostPreferableForConsumption(tfms)
 
-    if (!chosenTfm)
-      throw new Error(`No consumable sources were found in ${fromPackageDir}`)
+    if (!chosenTfm) throw new Error(`No consumable sources were found in ${fromPackageDir}`)
 
-    await fs.cp(
-      path.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw),
-      toDir,
-      {
-        recursive: true
-      }
-    )
+    await fs.cp(path.join(fromPackageDir, libOrRefDir.name, chosenTfm.raw), toDir, {
+      recursive: true
+    })
   }
 
   async CopyReferenceAssemblies(
@@ -296,29 +249,10 @@ export default abstract class InstallSteps {
     await Promise.all([
       ...allPaths
         .map(depPath => path.parse(depPath))
-        .map(
-          async depPath =>
-            await fs.copyFile(
-              path.format(depPath),
-              path.join(netcodeWeaverDepsDir, depPath.base)
-            )
-        ),
+        .map(async depPath => await fs.copyFile(path.format(depPath), path.join(netcodeWeaverDepsDir, depPath.base))),
       ...packages
-        .map(nuGetPackage =>
-          path.join(
-            nuGetPackageCacheDir,
-            nuGetPackage.id.toLowerCase(),
-            nuGetPackage.version.raw
-          )
-        )
-        .map(
-          async packageDir =>
-            await this.CopyPackageAssembliesTo(
-              targetFramework,
-              packageDir,
-              netcodeWeaverDepsDir
-            )
-        )
+        .map(nuGetPackage => path.join(nuGetPackageCacheDir, nuGetPackage.id.toLowerCase(), nuGetPackage.version.raw))
+        .map(async packageDir => await this.CopyPackageAssembliesTo(targetFramework, packageDir, netcodeWeaverDepsDir))
     ])
   }
 }
