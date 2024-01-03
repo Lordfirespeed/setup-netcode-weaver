@@ -31,7 +31,7 @@ steps:
 |-------------------------|-------------------------------------------------------------------------------------|
 | netcode-patcher-version | Netcode Patcher version to setup                                                    |
 | deps-packages           | NuGet packages (must be available in NuGet cache) to copy reference assemblies from |
-| deps-paths]             | Reference assembly paths to copy                                                    |
+| deps-paths              | Reference assembly paths to copy                                                    |
 | target-framework        | Project target framework moniker used to resolve dependency assemblies              |
 
 ## Outputs
